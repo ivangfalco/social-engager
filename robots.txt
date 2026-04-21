@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ivangfalco.github.io/social-engager/sitemap.xml

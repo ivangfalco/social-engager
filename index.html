@@ -4,6 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>How to Build a LinkedIn Lead Scraper with Claude Code</title>
+<meta name="description" content="Step-by-step guide to building a LinkedIn lead scraper that tracks keywords, profiles, and posts. Collect every person who likes or comments. 1,000 leads for $6. Built with Claude Code, Supabase, Limadata, and Apify.">
+<meta name="keywords" content="LinkedIn lead scraper, Claude Code, LinkedIn scraping tool, LinkedIn engagement scraper, lead generation, Limadata, Apify, Supabase, social selling, LinkedIn automation, GTM tools, build with AI">
+<meta name="author" content="Ivan Falco">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://ivangfalco.github.io/social-engager/">
+
+<!-- Open Graph -->
+<meta property="og:title" content="How to Build a LinkedIn Lead Scraper with Claude Code">
+<meta property="og:description" content="Track keywords, profiles, and posts on LinkedIn. Collect every person who engages. 1,000 leads for $6. Full setup guide with Supabase, Limadata, Apify, and Railway.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://ivangfalco.github.io/social-engager/">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to Build a LinkedIn Lead Scraper with Claude Code">
+<meta name="twitter:description" content="Track keywords, profiles, and posts on LinkedIn. Collect every person who engages. 1,000 leads for $6.">
+
+<!-- Schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "How to Build a LinkedIn Lead Scraper with Claude Code",
+  "description": "Step-by-step guide to building a LinkedIn lead scraper that tracks keywords, profiles, and posts. Collect every person who likes or comments. 1,000 leads for $6.",
+  "author": {
+    "@type": "Person",
+    "name": "Ivan Falco",
+    "url": "https://coldiq.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ColdIQ"
+  },
+  "mainEntityOfPage": "https://ivangfalco.github.io/social-engager/",
+  "keywords": "LinkedIn lead scraper, Claude Code, Limadata, Apify, Supabase, lead generation"
+}
+</script>
 
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -787,13 +824,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="stack-card st-frontend"><h5>React + Vite</h5><p>Frontend dashboard<br>hosted on Netlify</p></div>
     <div class="stack-card st-db"><h5>Supabase</h5><p>Postgres database<br>+ auth + realtime</p></div>
     <div class="stack-card st-queue"><h5>Python Worker</h5><p>Background processor<br>on Railway (Docker)</p></div>
-    <div class="stack-card st-crm"><h5>LinkedIn Data API</h5><p>Post search, profile<br>posts, metadata</p></div>
-    <div class="stack-card st-email"><h5>Scraping API</h5><p>Extract commenters<br>+ likers from posts</p></div>
+    <div class="stack-card st-crm"><h5>Limadata</h5><p>LinkedIn post search,<br>profile posts, metadata</p></div>
+    <div class="stack-card st-email"><h5>Apify</h5><p>Extract commenters<br>+ likers from posts</p></div>
     <div class="stack-card st-notify"><h5>Webhook Delivery</h5><p>Send leads to Clay,<br>CRM, or anywhere</p></div>
   </div>
 
   <div class="note">
-    <strong>Why this stack:</strong> React + Vite for a fast dashboard. Supabase handles auth, database, and realtime subscriptions (job status updates live). Python worker on Railway runs 24/7 for about $5/month. LinkedIn data API and scraping API handle the actual data extraction. Total infra cost: under $10/month before API usage.
+    <strong>Why this stack:</strong> React + Vite for a fast dashboard. Supabase handles auth, database, and realtime subscriptions (job status updates live). Python worker on Railway runs 24/7 for about $5/month. Limadata handles LinkedIn post search and profile data. Apify handles the actual engagement scraping (commenters + likers). Total infra cost: under $10/month before API usage.
   </div>
 
   <!-- ============================================ -->
@@ -817,8 +854,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                                    │
                                                         ┌──────────┴──────────┐
                                                         │  <span class="kw">External APIs</span>       │
-                                                        │  LinkedIn data API  │
-                                                        │  Scraping API       │
+                                                        │  Limadata           │
+                                                        │  Apify              │
                                                         │  Webhook delivery   │
                                                         └─────────────────────┘
 </pre>
@@ -967,12 +1004,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="step-body">
       <div class="two-col" style="margin-bottom: 0;">
         <div class="card" style="margin-bottom: 0;">
-          <div class="card-title">LinkedIn Data API</div>
-          <div class="card-desc" style="margin-bottom: 0;">For searching posts by keyword, fetching a profile's recent posts, and getting post metadata (engagement counts). Several providers offer this: look for APIs that support LinkedIn post search and profile post listing. Cost is typically per API call.</div>
+          <div class="card-title">Limadata</div>
+          <div class="card-desc" style="margin-bottom: 0;">For searching LinkedIn posts by keyword, fetching a profile's recent posts, and getting post metadata (engagement counts). Limadata provides LinkedIn data endpoints for post search and profile listing. Cost is per API call (about $0.04/call).</div>
         </div>
         <div class="card" style="margin-bottom: 0;">
-          <div class="card-title">Scraping API</div>
-          <div class="card-desc" style="margin-bottom: 0;">For extracting the actual people who liked and commented on a post. Look for scraping platforms that offer LinkedIn post comment and reaction extraction. Cost is typically per 1,000 results extracted.</div>
+          <div class="card-title">Apify</div>
+          <div class="card-desc" style="margin-bottom: 0;">For extracting the actual people who liked and commented on a post. Apify runs scraping actors that pull LinkedIn post commenters and reactions. Cost is about $2 per 1,000 engagers extracted.</div>
         </div>
       </div>
     </div>
@@ -1000,10 +1037,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <li><span class="env-label">Supabase (service role)</span></li>
         <li>SUPABASE_URL</li>
         <li>SUPABASE_KEY</li>
-        <li><span class="env-label">LinkedIn Data API</span></li>
-        <li>LINKEDIN_DATA_API_KEY</li>
-        <li><span class="env-label">Scraping API</span></li>
-        <li>SCRAPING_API_KEY</li>
+        <li><span class="env-label">Limadata</span></li>
+        <li>LIMADATA_API_KEY</li>
+        <li><span class="env-label">Apify</span></li>
+        <li>APIFY_API_KEY</li>
       </ul>
     </div>
   </div>
@@ -1243,7 +1280,7 @@ supabase = <span class="fn">create_client</span>(SUPABASE_URL, SUPABASE_KEY)
           <div class="sub-num">2</div>
           <div class="sub-content">
             <strong>Profile mode</strong>
-            <p>Fetch the profile's recent posts via the LinkedIn data API. For each post, scrape commenters + likers. Useful for tracking competitors or your own team's content.</p>
+            <p>Fetch the profile's recent posts via Limadata. For each post, scrape commenters + likers with Apify. Useful for tracking competitors or your own team's content.</p>
           </div>
         </li>
         <li>
@@ -1417,11 +1454,11 @@ supabase = <span class="fn">create_client</span>(SUPABASE_URL, SUPABASE_KEY)
         </div>
         <div class="pitfall">
           <h4>Zero engagers</h4>
-          <p>If the scraping API returns 0 results, mark the job as failed instead of completed. Something went wrong - don't record it as a successful run.</p>
+          <p>If Apify returns 0 results, mark the job as failed instead of completed. Something went wrong - don't record it as a successful run.</p>
         </div>
         <div class="pitfall">
           <h4>Parallel limits</h4>
-          <p>Cap concurrent scraping API calls to 3. More than that and you hit rate limits or timeouts. Use a semaphore or simple counter.</p>
+          <p>Cap concurrent Apify actor calls to 3. More than that and you hit rate limits or timeouts. Use a semaphore or simple counter.</p>
         </div>
         <div class="pitfall">
           <h4>Smart skip (posts mode)</h4>
@@ -1537,7 +1574,7 @@ supabase = <span class="fn">create_client</span>(SUPABASE_URL, SUPABASE_KEY)
     <div class="card-desc">Follow this sequence. Start with the database and worker, then build the frontend around it.</div>
     <ol class="build-order">
       <li><strong>Supabase setup</strong> - create project, run schema, enable RLS</li>
-      <li><strong>Get API access</strong> - LinkedIn data API + scraping API credentials</li>
+      <li><strong>Get API access</strong> - Limadata + Apify API credentials</li>
       <li><strong>Worker skeleton</strong> - polling loop + job status updates</li>
       <li><strong>Direct mode</strong> - simplest: paste URL, scrape, return results</li>
       <li><strong>Keyword mode</strong> - search posts, scrape top results</li>
@@ -1555,20 +1592,38 @@ supabase = <span class="fn">create_client</span>(SUPABASE_URL, SUPABASE_KEY)
   </div>
 
   <div class="note">
-    <strong>Cost breakdown:</strong> About $6 per 1,000 leads from the scraping APIs. Infrastructure (Supabase + Railway + Netlify) runs under $10/month on free/starter tiers. The whole system is mutable - when you want to add a new mode, change the scraping logic, or adjust cost limits, describe it to Claude Code. Done in minutes.
+    <strong>Cost breakdown:</strong> About $6 per 1,000 leads ($2 from Apify scraping + $4 from Limadata calls). Infrastructure (Supabase + Railway + Netlify) runs under $10/month on free/starter tiers. The whole system is mutable - when you want to add a new mode, change the scraping logic, or adjust cost limits, describe it to Claude Code. Done in minutes.
   </div>
 
 
   <!-- ============================================ -->
   <!-- FOOTER -->
   <!-- ============================================ -->
+  <div class="divider"><span>More GTM Engineering Tools</span></div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
+    <a href="https://ivangfalco.github.io/claude-code-frameworks/" style="text-decoration: none;">
+      <div class="card" style="margin-bottom: 0; cursor: pointer;">
+        <div class="card-title">Claude Code GTM Framework</div>
+        <div class="card-desc" style="margin-bottom: 0;">The master framework for structuring Claude Code projects for go-to-market operations. Folder architecture, governance, AI agents, and knowledge hierarchies for B2B SaaS.</div>
+      </div>
+    </a>
+    <a href="https://ivangfalco.github.io/revenue-engine/" style="text-decoration: none;">
+      <div class="card" style="margin-bottom: 0; cursor: pointer;">
+        <div class="card-title">AI-Powered Revenue Engine</div>
+        <div class="card-desc" style="margin-bottom: 0;">Replace your $10K/year lead routing tool. Capture, qualify, route, book, enrich, and recover leads - serverless, under $50/month. Full step-by-step SOP.</div>
+      </div>
+    </a>
+  </div>
+
   <footer>
     <div class="footer-pill">
       <span>Ivan Falco  |  coldiq.com</span>
     </div>
     <p>
-      Track keywords, profiles, and posts on LinkedIn.<br>
-      Collect every person who engages. 1,000 leads for $6. Built with Claude Code.
+      Part of the <a href="https://ivangfalco.github.io/claude-code-frameworks/" style="color: rgba(255,255,255,0.85);">GTM Engineering Framework</a> for B2B SaaS.<br>
+      Track keywords, profiles, and posts on LinkedIn. 1,000 leads for $6.<br>
+      Built with Claude Code for outbound, ABM, and social selling teams.
     </p>
   </footer>
 

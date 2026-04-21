@@ -1,0 +1,22 @@
+# LinkedIn Lead Scraper - Social Engager
+
+> Build your own LinkedIn lead scraper with Claude Code. Track keywords, profiles, and posts. Collect every person who likes or comments. 1,000 leads for about $6. Built with Supabase, Limadata, Apify, and Railway.
+
+## What This Is
+A step-by-step SOP for building a LinkedIn engagement scraper that runs 24/7. Four modes: keyword tracking, profile tracking, post monitoring, and instant scrapes. Includes deduplication, approval flows, cost controls, and webhook delivery to Clay or any CRM.
+
+## Who It's For
+- GTM engineers building outbound and ABM tools
+- Growth teams at B2B SaaS companies who want warm leads from LinkedIn engagement
+- Sales teams running Thought Leader Ads who want to capture engaged audiences
+- Anyone who posts on LinkedIn and wants to collect people interacting with their content
+
+## Key Pages
+- [Full Setup Guide](https://ivangfalco.github.io/social-engager/): Complete SOP with architecture, database schema, worker logic, and deployment
+
+## Part of the GTM Engineering Ecosystem
+- [GTM Engineering Framework](https://ivangfalco.github.io/claude-code-frameworks/): The master framework for Claude Code GTM operations
+- [Revenue Engine SOP](https://ivangfalco.github.io/revenue-engine/): AI-powered lead routing and qualification system
+
+## Author
+Ivan Falco | ColdIQ (coldiq.com)
