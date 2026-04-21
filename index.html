@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Build a LinkedIn Lead Scraper with Claude Code</title>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T7P7258');</script>
+<!-- End Google Tag Manager -->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --blue:    #B4C4FF;
+    --green:   #8DFAB6;
+    --pink:    #F3C6FD;
+    --orange:  #FFAD03;
+    --purple:  #DDCBFF;
+    --teal:    #8DD8F0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #627DFF;
+    color: #000;
+    min-height: 100vh;
+  }
+
+  .page { max-width: 920px; margin: 0 auto; padding: 56px 28px 72px; }
+
+  /* ---- Header ---- */
+  header { text-align: center; margin-bottom: 48px; }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  h1 .accent { color: var(--green); }
+
+  .subtitle {
+    font-size: 16px;
+    color: rgba(255,255,255,0.75);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  /* ---- Section Dividers ---- */
+  .divider {
+    text-align: center;
+    margin: 56px 0 28px;
+    position: relative;
+  }
+  .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0; right: 0;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+  .divider span {
+    position: relative;
+    padding: 6px 18px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+  }
+
+  /* ---- Phase header ---- */
+  .phase {
+    text-align: center;
+    margin: 64px 0 12px;
+  }
+
+  .phase-badge {
+    display: inline-block;
+    padding: 8px 22px;
+    border-radius: 24px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #000;
+    margin-bottom: 10px;
+  }
+
+  .phase h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+  }
+
+  .phase p {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.7);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+
+  /* ---- Cards ---- */
+  .card {
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 18px;
+    padding: 32px 28px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 30px rgba(40,60,120,0.12), 0 1px 4px rgba(40,60,120,0.06);
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 3px;
+  }
+
+  .card-desc {
+    font-size: 12.5px;
+    color: #000;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .card-desc:last-child { margin-bottom: 0; }
+
+  /* ---- Step card ---- */
+  .step-card {
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 18px;
+    padding: 0;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 30px rgba(40,60,120,0.12), 0 1px 4px rgba(40,60,120,0.06);
+    overflow: hidden;
+  }
+
+  .step-banner {
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .step-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    flex-shrink: 0;
+  }
+
+  .step-banner h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #000;
+    line-height: 1.3;
+  }
+
+  .step-banner .step-sub {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(0,0,0,0.55);
+    margin-top: 2px;
+  }
+
+  .step-body {
+    padding: 0 28px 28px;
+  }
+
+  /* ---- Sub-steps ---- */
+  .sub-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sub-steps li {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    align-items: flex-start;
+  }
+
+  .sub-steps li:last-child { border-bottom: none; }
+
+  .sub-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    background: #627DFF;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .sub-content {
+    flex: 1;
+  }
+
+  .sub-content strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .sub-content p {
+    font-size: 12px;
+    color: rgba(0,0,0,0.6);
+    line-height: 1.55;
+  }
+
+  /* ---- Code blocks ---- */
+  pre.code {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    font-size: 11.5px;
+    line-height: 1.7;
+    white-space: pre;
+    overflow-x: auto;
+    color: #000;
+    background: rgba(0,0,0,0.04);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+  }
+
+  pre.code .cm { color: rgba(0,0,0,0.4); font-style: italic; }
+  pre.code .kw { color: #627DFF; font-weight: 600; }
+  pre.code .fn { color: #7B61C2; font-weight: 600; }
+  pre.code .st { color: #20A060; }
+
+  /* ---- Diagram boxes ---- */
+  .diagram {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0;
+    margin: 24px 0 12px;
+    flex-wrap: wrap;
+  }
+
+  .dia-box {
+    padding: 18px 16px;
+    border-radius: 14px;
+    text-align: center;
+    min-width: 130px;
+    flex: 1;
+    max-width: 220px;
+  }
+
+  .dia-box h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 3px;
+  }
+
+  .dia-box p {
+    font-size: 10.5px;
+    line-height: 1.45;
+    color: rgba(0,0,0,0.7);
+  }
+
+  .dia-arrow {
+    display: flex;
+    align-items: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 20px;
+    padding: 0 4px;
+    flex-shrink: 0;
+    font-weight: 300;
+  }
+
+  .dia-capture  { background: var(--blue); }
+  .dia-qualify  { background: var(--purple); }
+  .dia-route    { background: var(--pink); }
+  .dia-book     { background: var(--green); }
+  .dia-enrich   { background: var(--orange); }
+  .dia-recover  { background: var(--teal); }
+
+  /* ---- Tech stack grid ---- */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 16px 0 8px;
+  }
+
+  .stack-card {
+    border-radius: 14px;
+    padding: 20px 14px;
+    text-align: center;
+  }
+
+  .stack-card h5 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 4px;
+  }
+
+  .stack-card p {
+    font-size: 10.5px;
+    line-height: 1.45;
+    color: rgba(0,0,0,0.65);
+  }
+
+  .st-frontend { background: var(--blue); }
+  .st-db       { background: var(--green); }
+  .st-queue    { background: var(--purple); }
+  .st-crm      { background: var(--orange); }
+  .st-email    { background: var(--pink); }
+  .st-notify   { background: var(--teal); }
+
+  /* ---- Note callout ---- */
+  .note {
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 12.5px;
+    color: #000;
+    line-height: 1.6;
+    box-shadow: 0 2px 12px rgba(40,60,120,0.08);
+  }
+
+  .note strong { color: #000; font-weight: 700; }
+
+  /* ---- File tree ---- */
+  pre.tree {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    font-size: 11.5px;
+    line-height: 1.8;
+    white-space: pre;
+    overflow-x: auto;
+    color: #000;
+  }
+
+  pre.tree .fi { color: #000; font-weight: 500; }
+  pre.tree .a  { color: rgba(0,0,0,0.4); font-style: italic; font-weight: 400; }
+  pre.tree .ah { color: #000; font-weight: 600; font-style: normal; }
+  pre.tree .t1 { color: #627DFF; font-weight: 700; }
+  pre.tree .t2 { color: #7B61C2; font-weight: 700; }
+  pre.tree .t3 { color: #20A060; font-weight: 700; }
+  pre.tree .t4 { color: #C060B0; font-weight: 700; }
+  pre.tree .t5 { color: #D09000; font-weight: 700; }
+  pre.tree .th { color: #000; font-weight: 800; }
+
+  /* ---- Two-col layout ---- */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .two-col .card { margin-bottom: 0; }
+
+  /* ---- Three-col layout ---- */
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .three-col .card { margin-bottom: 0; padding: 22px 18px; }
+
+  /* ---- Four mode cards ---- */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+
+  .mode-card {
+    background: rgba(0,0,0,0.03);
+    border-radius: 14px;
+    padding: 22px 20px;
+  }
+
+  .mode-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .mode-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 6px;
+  }
+
+  .mode-card p {
+    font-size: 12px;
+    color: rgba(0,0,0,0.6);
+    line-height: 1.55;
+  }
+
+  /* ---- Endpoint card ---- */
+  .endpoint {
+    background: rgba(0,0,0,0.03);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 12px 0;
+  }
+
+  .endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .endpoint-method {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    background: #627DFF;
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+
+  .endpoint-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #000;
+  }
+
+  .endpoint-trigger {
+    font-size: 10.5px;
+    color: rgba(0,0,0,0.45);
+    margin-bottom: 10px;
+  }
+
+  .fires-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .fires-list li {
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 4px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    color: rgba(0,0,0,0.75);
+  }
+
+  .fires-list .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  /* ---- Env var list ---- */
+  .env-list {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 20px;
+  }
+
+  .env-list li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(0,0,0,0.7);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .env-list .env-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(0,0,0,0.4);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ---- Pitfall grid ---- */
+  .pitfall-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+
+  .pitfall {
+    background: rgba(0,0,0,0.03);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .pitfall h4 {
+    font-size: 12px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 4px;
+  }
+
+  .pitfall p {
+    font-size: 11px;
+    color: rgba(0,0,0,0.6);
+    line-height: 1.5;
+  }
+
+  /* ---- Build order ---- */
+  .build-order {
+    list-style: none;
+    padding: 0;
+    counter-reset: build;
+  }
+
+  .build-order li {
+    counter-increment: build;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .build-order li:last-child { border-bottom: none; }
+
+  .build-order li::before {
+    content: counter(build, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background: #627DFF;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ---- Footer ---- */
+  footer {
+    text-align: center;
+    margin-top: 56px;
+    padding-top: 20px;
+  }
+
+  .footer-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    padding: 12px 28px;
+    margin-bottom: 14px;
+  }
+
+  .footer-pill span {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.3px;
+  }
+
+  footer p {
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.8;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px) {
+    .page { padding: 40px 18px 56px; }
+    h1 { font-size: 30px; letter-spacing: -1px; }
+    .subtitle { font-size: 14px; }
+    .phase h2 { font-size: 22px; }
+    .stack-grid { grid-template-columns: repeat(3, 1fr); }
+    .card, .step-card { border-radius: 14px; }
+    .step-body { padding: 0 20px 24px; }
+    .step-banner { padding: 18px 20px; }
+    pre.tree { font-size: 10.5px; }
+    pre.code { font-size: 10.5px; }
+    .two-col { grid-template-columns: 1fr; gap: 12px; }
+    .three-col { grid-template-columns: 1fr; gap: 12px; }
+    .mode-grid { grid-template-columns: 1fr; }
+    .env-list { grid-template-columns: 1fr; }
+    .pitfall-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 520px) {
+    .page { padding: 28px 12px 40px; }
+    h1 { font-size: 24px; letter-spacing: -0.8px; }
+    h1 br { display: none; }
+    .subtitle { font-size: 13px; }
+    .badge { font-size: 9px; padding: 5px 12px; }
+    .phase h2 { font-size: 20px; }
+    .phase-badge { font-size: 10px; padding: 6px 16px; }
+    .divider { margin: 40px 0 20px; }
+    .divider span { font-size: 10px; letter-spacing: 1.2px; padding: 5px 14px; }
+    .card { padding: 20px 14px; }
+    .step-banner { padding: 16px 14px; gap: 12px; }
+    .step-banner h3 { font-size: 15px; }
+    .step-num { width: 38px; height: 38px; font-size: 16px; }
+    .step-body { padding: 0 14px 20px; }
+    pre.tree { font-size: 9.5px; line-height: 1.6; }
+    pre.tree .a { display: none; }
+    pre.code { font-size: 9.5px; padding: 12px 14px; }
+    .diagram { flex-direction: column; align-items: stretch; gap: 0; }
+    .dia-box { max-width: 100%; min-width: auto; padding: 14px 18px; border-radius: 12px; }
+    .dia-arrow { transform: rotate(90deg); padding: 4px 0; font-size: 18px; justify-content: center; }
+    .stack-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .note { padding: 14px 16px; font-size: 11.5px; border-radius: 12px; }
+    .footer-pill { padding: 10px 20px; }
+    .footer-pill span { font-size: 12px; }
+    footer p { font-size: 10.5px; }
+  }
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T7P7258"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="page">
+
+  <!-- ============================================ -->
+  <!-- HEADER -->
+  <!-- ============================================ -->
+  <header>
+    <div class="badge">Full Setup Guide</div>
+    <h1>Build a LinkedIn<br><span class="accent">Lead Scraper</span></h1>
+    <p class="subtitle">Track keywords, profiles, and posts on LinkedIn. Collect every person who likes or comments. 1,000 leads for about $6. Built with Claude Code.</p>
+  </header>
+
+  <!-- ============================================ -->
+  <!-- THE 4 MODES -->
+  <!-- ============================================ -->
+  <div class="divider"><span>What It Does</span></div>
+
+  <div class="card">
+    <div class="card-title">4 Ways to Collect Leads</div>
+    <div class="card-desc">Each mode solves a different use case. Run them on a schedule or trigger them manually.</div>
+
+    <div class="mode-grid">
+      <div class="mode-card">
+        <div class="mode-num" style="background: var(--blue);">1</div>
+        <h4>Track Keywords</h4>
+        <p>Pick a topic like "outbound", "AI", or "GTM". The tool searches LinkedIn for posts mentioning that keyword and collects every person liking and commenting on them.</p>
+      </div>
+      <div class="mode-card">
+        <div class="mode-num" style="background: var(--purple);">2</div>
+        <h4>Track Profiles</h4>
+        <p>Add a LinkedIn profile URL. The tool checks their new posts and collects the people interacting with them. Track competitors, creators, or your own team.</p>
+      </div>
+      <div class="mode-card">
+        <div class="mode-num" style="background: var(--green);">3</div>
+        <h4>Track Posts Over Time</h4>
+        <p>Add a post link. The tool keeps checking that post and collects new people who like or comment as they come in. Great for Thought Leader Ads.</p>
+      </div>
+      <div class="mode-card">
+        <div class="mode-num" style="background: var(--orange);">4</div>
+        <h4>Instant Post Scrape</h4>
+        <p>Paste a post link and get the full list right now. No waiting, no schedule. One-time pull of everyone who engaged.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Output:</strong> Every lead comes back with LinkedIn profile data. Send the list to Clay, export a CSV, push to a webhook, or pipe it anywhere you want.
+  </div>
+
+  <!-- ============================================ -->
+  <!-- HOW IT WORKS -->
+  <!-- ============================================ -->
+  <div class="divider"><span>How It Works</span></div>
+
+  <div class="diagram">
+    <div class="dia-box dia-capture">
+      <h4>Create Monitor</h4>
+      <p>Keyword, profile,<br>or post URL</p>
+    </div>
+    <div class="dia-arrow">-</div>
+    <div class="dia-box dia-qualify">
+      <h4>Queue Job</h4>
+      <p>Schedule or<br>trigger manually</p>
+    </div>
+    <div class="dia-arrow">-</div>
+    <div class="dia-box dia-route">
+      <h4>Worker Picks Up</h4>
+      <p>Polls queue<br>every 5 seconds</p>
+    </div>
+    <div class="dia-arrow">-</div>
+    <div class="dia-box dia-book">
+      <h4>Scrape LinkedIn</h4>
+      <p>Fetch posts,<br>get engagers</p>
+    </div>
+    <div class="dia-arrow">-</div>
+    <div class="dia-box dia-enrich">
+      <h4>Deduplicate</h4>
+      <p>Skip people<br>you already have</p>
+    </div>
+    <div class="dia-arrow">-</div>
+    <div class="dia-box dia-recover">
+      <h4>Deliver</h4>
+      <p>Webhook, CSV,<br>or Clay</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TECH STACK -->
+  <!-- ============================================ -->
+  <div class="divider"><span>Tech Stack</span></div>
+
+  <div class="stack-grid">
+    <div class="stack-card st-frontend"><h5>React + Vite</h5><p>Frontend dashboard<br>hosted on Netlify</p></div>
+    <div class="stack-card st-db"><h5>Supabase</h5><p>Postgres database<br>+ auth + realtime</p></div>
+    <div class="stack-card st-queue"><h5>Python Worker</h5><p>Background processor<br>on Railway (Docker)</p></div>
+    <div class="stack-card st-crm"><h5>LinkedIn Data API</h5><p>Post search, profile<br>posts, metadata</p></div>
+    <div class="stack-card st-email"><h5>Scraping API</h5><p>Extract commenters<br>+ likers from posts</p></div>
+    <div class="stack-card st-notify"><h5>Webhook Delivery</h5><p>Send leads to Clay,<br>CRM, or anywhere</p></div>
+  </div>
+
+  <div class="note">
+    <strong>Why this stack:</strong> React + Vite for a fast dashboard. Supabase handles auth, database, and realtime subscriptions (job status updates live). Python worker on Railway runs 24/7 for about $5/month. LinkedIn data API and scraping API handle the actual data extraction. Total infra cost: under $10/month before API usage.
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ARCHITECTURE -->
+  <!-- ============================================ -->
+  <div class="divider"><span>Architecture</span></div>
+
+  <div class="card">
+    <div class="card-title">How the System Connects</div>
+    <div class="card-desc">The frontend creates monitors and queues jobs. The Python worker polls Supabase every 5 seconds, picks up jobs, calls the LinkedIn APIs, deduplicates results, and delivers leads via webhook.</div>
+<pre class="code">
+<span class="cm">Dashboard (React)</span>           <span class="cm">Database (Supabase)</span>           <span class="cm">Worker (Python on Railway)</span>
+┌─────────────────┐       ┌─────────────────────┐       ┌─────────────────────┐
+│                 │       │                     │       │                     │
+│  Create monitor │──────>│  monitors table     │       │  Polls every 5s     │
+│  Queue job      │──────>│  queue_jobs table   │<──────│  Picks up "queued"  │
+│  View results   │<──────│  runs table         │<──────│  Writes results     │
+│  Approve large  │──────>│  seen_engagers      │<──────│  Deduplicates       │
+│                 │       │                     │       │                     │
+└─────────────────┘       └─────────────────────┘       └──────────┬──────────┘
+                                                                   │
+                                                        ┌──────────┴──────────┐
+                                                        │  <span class="kw">External APIs</span>       │
+                                                        │  LinkedIn data API  │
+                                                        │  Scraping API       │
+                                                        │  Webhook delivery   │
+                                                        └─────────────────────┘
+</pre>
+  </div>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-title">Realtime Updates</div>
+      <div class="card-desc">Supabase realtime subscriptions push job status changes to the dashboard. You see "queued" -> "running" -> "completed" live.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Deduplication</div>
+      <div class="card-desc">A seen_engagers table tracks every person you've already collected per monitor. Repeat runs only return new leads.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Approval Flow</div>
+      <div class="card-desc">Jobs with 1,000+ estimated leads pause and ask for approval before running. Prevents surprise API costs.</div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- PHASE 1: SETUP -->
+  <!-- ============================================ -->
+  <div class="phase">
+    <div class="phase-badge" style="background: var(--blue);">Phase 1</div>
+    <h2>Project Setup</h2>
+    <p>Create the frontend, set up the database, configure the worker, and get API access for LinkedIn data extraction.</p>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--blue);">01</div>
+      <div>
+        <h3>Create the Frontend</h3>
+        <div class="step-sub">React + Vite + Tailwind + Supabase Auth</div>
+      </div>
+    </div>
+    <div class="step-body">
+<pre class="code">
+<span class="cm"># Create the project</span>
+<span class="kw">npm</span> create vite@latest social-engager -- --template react-ts
+<span class="kw">cd</span> social-engager
+
+<span class="cm"># Install dependencies</span>
+<span class="kw">npm install</span> @supabase/supabase-js tailwindcss postcss autoprefixer
+<span class="kw">npm install</span> lucide-react react-router-dom
+
+<span class="cm"># Init Tailwind</span>
+<span class="kw">npx</span> tailwindcss init -p
+</pre>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--blue);">02</div>
+      <div>
+        <h3>Set Up the Supabase Database</h3>
+        <div class="step-sub">Create a Supabase project and run the schema</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="card-desc">Six core tables. Monitors hold the config, queue_jobs holds pending work, runs hold results, seen_engagers handles dedup, and projects + profiles handle multi-tenant auth.</div>
+<pre class="code">
+<span class="cm">-- Core tables</span>
+
+<span class="kw">CREATE TABLE</span> profiles (
+  id UUID <span class="kw">REFERENCES</span> auth.users PRIMARY KEY,
+  email TEXT,
+  full_name TEXT,
+  created_at TIMESTAMPTZ <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="kw">CREATE TABLE</span> projects (
+  id UUID <span class="kw">DEFAULT</span> gen_random_uuid() PRIMARY KEY,
+  name TEXT <span class="kw">NOT NULL</span>,
+  created_by UUID <span class="kw">REFERENCES</span> profiles(id),
+  created_at TIMESTAMPTZ <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="kw">CREATE TABLE</span> monitors (
+  id UUID <span class="kw">DEFAULT</span> gen_random_uuid() PRIMARY KEY,
+  project_id UUID <span class="kw">REFERENCES</span> projects(id),
+  name TEXT <span class="kw">NOT NULL</span>,
+  mode TEXT <span class="kw">NOT NULL</span>,          <span class="cm">-- 'keyword' | 'profile' | 'posts' | 'direct'</span>
+  input TEXT <span class="kw">NOT NULL</span>,         <span class="cm">-- keyword string, profile URL, or post URLs</span>
+  webhook_url TEXT,             <span class="cm">-- where to send leads</span>
+  schedule TEXT,                <span class="cm">-- 'daily' | 'weekly' | 'monthly' | null</span>
+  is_active BOOLEAN <span class="kw">DEFAULT</span> <span class="kw">true</span>,
+  created_at TIMESTAMPTZ <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="kw">CREATE TABLE</span> queue_jobs (
+  id UUID <span class="kw">DEFAULT</span> gen_random_uuid() PRIMARY KEY,
+  monitor_id UUID <span class="kw">REFERENCES</span> monitors(id),
+  project_id UUID <span class="kw">REFERENCES</span> projects(id),
+  status TEXT <span class="kw">DEFAULT</span> <span class="st">'queued'</span>,  <span class="cm">-- queued | running | completed | failed | awaiting_approval</span>
+  payload JSONB,
+  result JSONB,
+  error TEXT,
+  started_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="kw">CREATE TABLE</span> runs (
+  id UUID <span class="kw">DEFAULT</span> gen_random_uuid() PRIMARY KEY,
+  monitor_id UUID <span class="kw">REFERENCES</span> monitors(id),
+  project_id UUID <span class="kw">REFERENCES</span> projects(id),
+  job_id UUID <span class="kw">REFERENCES</span> queue_jobs(id),
+  leads_found INTEGER <span class="kw">DEFAULT</span> 0,
+  new_leads INTEGER <span class="kw">DEFAULT</span> 0,
+  cost DECIMAL(10,4) <span class="kw">DEFAULT</span> 0,
+  posts_scraped INTEGER <span class="kw">DEFAULT</span> 0,
+  details JSONB,
+  created_at TIMESTAMPTZ <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="kw">CREATE TABLE</span> seen_engagers (
+  id UUID <span class="kw">DEFAULT</span> gen_random_uuid() PRIMARY KEY,
+  monitor_id UUID <span class="kw">REFERENCES</span> monitors(id),
+  post_url TEXT <span class="kw">NOT NULL</span>,
+  engager_profile_url TEXT <span class="kw">NOT NULL</span>,
+  first_seen_at TIMESTAMPTZ <span class="kw">DEFAULT</span> <span class="fn">NOW</span>(),
+  <span class="kw">UNIQUE</span>(monitor_id, post_url, engager_profile_url)
+);
+</pre>
+      <div class="note" style="margin-bottom: 0;">
+        <strong>Enable Row-Level Security</strong> on all tables. Each table should have RLS policies scoped to the user's project. The backend worker uses the Supabase service role key to bypass RLS.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--blue);">03</div>
+      <div>
+        <h3>Get API Access</h3>
+        <div class="step-sub">You need two external APIs for LinkedIn data</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="two-col" style="margin-bottom: 0;">
+        <div class="card" style="margin-bottom: 0;">
+          <div class="card-title">LinkedIn Data API</div>
+          <div class="card-desc" style="margin-bottom: 0;">For searching posts by keyword, fetching a profile's recent posts, and getting post metadata (engagement counts). Several providers offer this: look for APIs that support LinkedIn post search and profile post listing. Cost is typically per API call.</div>
+        </div>
+        <div class="card" style="margin-bottom: 0;">
+          <div class="card-title">Scraping API</div>
+          <div class="card-desc" style="margin-bottom: 0;">For extracting the actual people who liked and commented on a post. Look for scraping platforms that offer LinkedIn post comment and reaction extraction. Cost is typically per 1,000 results extracted.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--blue);">04</div>
+      <div>
+        <h3>Set Up Environment Variables</h3>
+        <div class="step-sub">Frontend .env and backend .env</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="card-desc"><strong>Frontend .env</strong> (Vite exposes VITE_ prefixed vars to the browser - only put public keys here):</div>
+      <ul class="env-list">
+        <li><span class="env-label">Supabase (public)</span></li>
+        <li>VITE_SUPABASE_URL</li>
+        <li>VITE_SUPABASE_ANON_KEY</li>
+      </ul>
+
+      <div class="card-desc" style="margin-top: 16px;"><strong>Backend .env</strong> (all secret - never expose these):</div>
+      <ul class="env-list">
+        <li><span class="env-label">Supabase (service role)</span></li>
+        <li>SUPABASE_URL</li>
+        <li>SUPABASE_KEY</li>
+        <li><span class="env-label">LinkedIn Data API</span></li>
+        <li>LINKEDIN_DATA_API_KEY</li>
+        <li><span class="env-label">Scraping API</span></li>
+        <li>SCRAPING_API_KEY</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--blue);">05</div>
+      <div>
+        <h3>Organize the File Structure</h3>
+        <div class="step-sub">Frontend pages + hooks, backend worker</div>
+      </div>
+    </div>
+    <div class="step-body">
+<pre class="tree">
+<span class="th">social-engager/</span>
+│
+├── <span class="t1">src/</span>                             <span class="a">← React frontend</span>
+│   ├── <span class="fi">App.tsx</span>                      <span class="a">← Routes + auth gating</span>
+│   ├── <span class="t1">pages/</span>
+│   │   ├── <span class="fi">Dashboard.tsx</span>            <span class="a">← Monitor management</span>
+│   │   ├── <span class="fi">Queue.tsx</span>                <span class="a">← Job queue + approval flow</span>
+│   │   ├── <span class="fi">History.tsx</span>              <span class="a">← Run execution history</span>
+│   │   ├── <span class="fi">Trigger.tsx</span>              <span class="a">← Manual job triggering</span>
+│   │   └── <span class="fi">Login.tsx</span>                <span class="a">← Supabase auth</span>
+│   ├── <span class="t2">components/</span>
+│   │   ├── <span class="fi">MonitorCard.tsx</span>          <span class="a">← Display monitor config + stats</span>
+│   │   ├── <span class="fi">MonitorForm.tsx</span>          <span class="a">← Create/edit monitors</span>
+│   │   ├── <span class="fi">UsageBanner.tsx</span>          <span class="a">← Cost + usage tracking</span>
+│   │   └── <span class="fi">Layout.tsx</span>               <span class="a">← Navigation shell</span>
+│   ├── <span class="t3">hooks/</span>
+│   │   ├── <span class="fi">useMonitors.ts</span>           <span class="a">← CRUD for monitors</span>
+│   │   ├── <span class="fi">useQueue.ts</span>              <span class="a">← Job enqueueing + approval</span>
+│   │   ├── <span class="fi">useRuns.ts</span>               <span class="a">← Execution history queries</span>
+│   │   ├── <span class="fi">useUsageStats.ts</span>         <span class="a">← Cost tracking per project</span>
+│   │   └── <span class="fi">useJobNotifications.ts</span>   <span class="a">← Realtime status via Supabase</span>
+│   └── <span class="t4">lib/</span>
+│       ├── <span class="fi">supabase.ts</span>              <span class="a">← Supabase client init</span>
+│       ├── <span class="fi">types.ts</span>                 <span class="a">← TypeScript interfaces</span>
+│       └── <span class="fi">costs.ts</span>                 <span class="a">← Cost calculation helpers</span>
+│
+├── <span class="t5">backend/</span>                         <span class="a">← Python worker</span>
+│   ├── <span class="fi">worker.py</span>                    <span class="a">← Main job processor (runs 24/7)</span>
+│   ├── <span class="fi">Dockerfile</span>                   <span class="a">← Python 3.11-slim for Railway</span>
+│   └── <span class="fi">requirements.txt</span>             <span class="a">← supabase, requests, python-dotenv</span>
+│
+└── <span class="t1">supabase/</span>                        <span class="a">← Database schema + migrations</span>
+    ├── <span class="fi">setup.sql</span>                    <span class="a">← Full production schema</span>
+    └── <span class="fi">migrations/</span>                  <span class="a">← Incremental changes</span>
+</pre>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- PHASE 2: FRONTEND -->
+  <!-- ============================================ -->
+  <div class="phase">
+    <div class="phase-badge" style="background: var(--purple);">Phase 2</div>
+    <h2>Build the Dashboard</h2>
+    <p>A React frontend with monitor management, a job queue with approval flow, execution history, and realtime status updates via Supabase.</p>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--purple);">06</div>
+      <div>
+        <h3>Build the Monitor Management Page</h3>
+        <div class="step-sub">Create, edit, and manage tracking monitors</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <ol class="sub-steps">
+        <li>
+          <div class="sub-num">1</div>
+          <div class="sub-content">
+            <strong>Monitor creation form</strong>
+            <p>Select mode (keyword, profile, posts, direct). Enter the input (keyword string, LinkedIn profile URL, or post URLs). Optionally set a webhook URL and schedule (daily, weekly, monthly).</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">2</div>
+          <div class="sub-content">
+            <strong>Monitor cards</strong>
+            <p>Display each monitor with its mode, input, schedule, and stats (total leads found, last run date, cost to date). Toggle active/inactive.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">3</div>
+          <div class="sub-content">
+            <strong>Manual trigger button</strong>
+            <p>Run any monitor on demand. Creates a queue_job with status "queued" and the monitor's config as payload.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--purple);">07</div>
+      <div>
+        <h3>Build the Job Queue + Approval Flow</h3>
+        <div class="step-sub">See pending, running, and completed jobs with realtime updates</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <ol class="sub-steps">
+        <li>
+          <div class="sub-num">1</div>
+          <div class="sub-content">
+            <strong>Job queue page</strong>
+            <p>List all jobs with status badges: queued (waiting), running (in progress), completed (done), failed (error), awaiting_approval (needs confirmation).</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">2</div>
+          <div class="sub-content">
+            <strong>Approval flow</strong>
+            <p>When estimated leads exceed 1,000, the worker sets status to "awaiting_approval". The dashboard shows the estimated count and cost. User clicks "Approve" to re-queue the job.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">3</div>
+          <div class="sub-content">
+            <strong>Realtime status updates</strong>
+            <p>Subscribe to Supabase realtime on the queue_jobs table. Status changes appear live without refreshing.</p>
+          </div>
+        </li>
+      </ol>
+<pre class="code">
+<span class="cm">// Supabase realtime subscription for job status</span>
+<span class="kw">const</span> channel = supabase
+  .channel(<span class="st">'job-updates'</span>)
+  .on(<span class="st">'postgres_changes'</span>, {
+    event: <span class="st">'UPDATE'</span>,
+    schema: <span class="st">'public'</span>,
+    table: <span class="st">'queue_jobs'</span>,
+    filter: <span class="st">`project_id=eq.${projectId}`</span>,
+  }, (payload) => {
+    <span class="fn">updateJobInState</span>(payload.new);
+  })
+  .subscribe();
+</pre>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--purple);">08</div>
+      <div>
+        <h3>Build the History + Usage Pages</h3>
+        <div class="step-sub">Track every run and monitor costs</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="two-col" style="margin-bottom: 0;">
+        <div class="card" style="margin-bottom: 0;">
+          <div class="card-title">Run History</div>
+          <div class="card-desc" style="margin-bottom: 0;">Show every execution with: monitor name, leads found vs new leads (after dedup), posts scraped, cost, and timestamp. Filter by monitor or date range.</div>
+        </div>
+        <div class="card" style="margin-bottom: 0;">
+          <div class="card-title">Usage Tracking</div>
+          <div class="card-desc" style="margin-bottom: 0;">Show total leads collected, total cost, and monthly usage against your limit. Display a warning banner when approaching 80% of monthly cap. Break down cost per monitor.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- PHASE 3: WORKER -->
+  <!-- ============================================ -->
+  <div class="phase">
+    <div class="phase-badge" style="background: var(--pink);">Phase 3</div>
+    <h2>Build the Worker</h2>
+    <p>A Python script that runs 24/7 on Railway. It polls Supabase for queued jobs, calls the LinkedIn APIs, deduplicates results, and delivers leads.</p>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--pink);">09</div>
+      <div>
+        <h3>Build the Job Polling Loop</h3>
+        <div class="step-sub">The worker polls Supabase every 5 seconds for new jobs</div>
+      </div>
+    </div>
+    <div class="step-body">
+<pre class="code">
+<span class="cm"># worker.py - main loop</span>
+
+<span class="kw">import</span> time
+<span class="kw">from</span> supabase <span class="kw">import</span> create_client
+
+supabase = <span class="fn">create_client</span>(SUPABASE_URL, SUPABASE_KEY)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="cm"># Pick up the oldest queued job</span>
+    job = supabase.table(<span class="st">"queue_jobs"</span>) \
+        .select(<span class="st">"*"</span>) \
+        .eq(<span class="st">"status"</span>, <span class="st">"queued"</span>) \
+        .order(<span class="st">"created_at"</span>) \
+        .limit(1) \
+        .execute()
+
+    <span class="kw">if</span> job.data:
+        <span class="fn">process_job</span>(job.data[0])
+    <span class="kw">else</span>:
+        time.<span class="fn">sleep</span>(5)
+</pre>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--pink);">10</div>
+      <div>
+        <h3>Implement Each Scraping Mode</h3>
+        <div class="step-sub">Different logic for keywords, profiles, posts, and direct scrapes</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <ol class="sub-steps">
+        <li>
+          <div class="sub-num">1</div>
+          <div class="sub-content">
+            <strong>Keyword mode</strong>
+            <p>Search LinkedIn for posts matching the keyword. Run two parallel searches (by relevance and by recency) to get a broader set. Take the top posts by engagement count. Scrape commenters + likers from each post.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">2</div>
+          <div class="sub-content">
+            <strong>Profile mode</strong>
+            <p>Fetch the profile's recent posts via the LinkedIn data API. For each post, scrape commenters + likers. Useful for tracking competitors or your own team's content.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">3</div>
+          <div class="sub-content">
+            <strong>Posts mode (recurring)</strong>
+            <p>Take the post URLs from the monitor config. Check if engagement count has changed since last run (smart skip). If new engagement detected, scrape and deduplicate against seen_engagers. Only return NEW people.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">4</div>
+          <div class="sub-content">
+            <strong>Direct mode (one-time)</strong>
+            <p>Take the post URL, scrape all commenters + likers in one shot. No dedup tracking, no repeat logic. One-time full pull.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--pink);">11</div>
+      <div>
+        <h3>Build the Scraping Pipeline</h3>
+        <div class="step-sub">Fetch posts, extract engagers, deduplicate, deliver</div>
+      </div>
+    </div>
+    <div class="step-body">
+<pre class="code">
+<span class="kw">def</span> <span class="fn">process_job</span>(job):
+    <span class="cm"># 1. Mark job as running</span>
+    <span class="fn">update_status</span>(job[<span class="st">"id"</span>], <span class="st">"running"</span>)
+
+    <span class="cm"># 2. Get post URLs based on mode</span>
+    <span class="kw">if</span> job[<span class="st">"mode"</span>] == <span class="st">"keyword"</span>:
+        posts = <span class="fn">search_posts_by_keyword</span>(job[<span class="st">"input"</span>])
+    <span class="kw">elif</span> job[<span class="st">"mode"</span>] == <span class="st">"profile"</span>:
+        posts = <span class="fn">get_profile_posts</span>(job[<span class="st">"input"</span>])
+    <span class="kw">else</span>:
+        posts = job[<span class="st">"input"</span>]  <span class="cm"># direct post URLs</span>
+
+    <span class="cm"># 3. Check approval threshold</span>
+    estimated = <span class="fn">estimate_engagers</span>(posts)
+    <span class="kw">if</span> estimated > 1000 <span class="kw">and not</span> job.get(<span class="st">"large_scrape_approved"</span>):
+        <span class="fn">update_status</span>(job[<span class="st">"id"</span>], <span class="st">"awaiting_approval"</span>)
+        <span class="kw">return</span>
+
+    <span class="cm"># 4. Scrape engagers from each post (parallel, max 3 concurrent)</span>
+    all_engagers = []
+    <span class="kw">for</span> post <span class="kw">in</span> posts:
+        commenters = <span class="fn">scrape_commenters</span>(post[<span class="st">"url"</span>])
+        likers = <span class="fn">scrape_likers</span>(post[<span class="st">"url"</span>])
+        all_engagers.extend(commenters + likers)
+
+    <span class="cm"># 5. Deduplicate against seen_engagers</span>
+    new_leads = <span class="fn">deduplicate</span>(job[<span class="st">"monitor_id"</span>], all_engagers)
+
+    <span class="cm"># 6. Deliver via webhook</span>
+    <span class="kw">if</span> job[<span class="st">"webhook_url"</span>] <span class="kw">and</span> new_leads:
+        <span class="fn">send_to_webhook</span>(job[<span class="st">"webhook_url"</span>], new_leads)
+
+    <span class="cm"># 7. Record results</span>
+    <span class="fn">create_run</span>(job, leads_found=len(all_engagers), new_leads=len(new_leads))
+    <span class="fn">update_status</span>(job[<span class="st">"id"</span>], <span class="st">"completed"</span>)
+</pre>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--pink);">12</div>
+      <div>
+        <h3>Build the Deduplication System</h3>
+        <div class="step-sub">Track every engager per monitor so repeat runs only return new leads</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="card-desc">The seen_engagers table tracks every (monitor_id, post_url, engager_profile_url) combination. Before delivering leads, check which ones are new.</div>
+<pre class="code">
+<span class="kw">def</span> <span class="fn">deduplicate</span>(monitor_id, engagers):
+    new_leads = []
+    <span class="kw">for</span> engager <span class="kw">in</span> engagers:
+        <span class="cm"># Check if we've seen this person on this post before</span>
+        existing = supabase.table(<span class="st">"seen_engagers"</span>) \
+            .select(<span class="st">"id"</span>) \
+            .eq(<span class="st">"monitor_id"</span>, monitor_id) \
+            .eq(<span class="st">"engager_profile_url"</span>, engager[<span class="st">"profile_url"</span>]) \
+            .execute()
+
+        <span class="kw">if not</span> existing.data:
+            <span class="cm"># New lead - record it and add to output</span>
+            supabase.table(<span class="st">"seen_engagers"</span>).<span class="fn">insert</span>({
+                <span class="st">"monitor_id"</span>: monitor_id,
+                <span class="st">"post_url"</span>: engager[<span class="st">"post_url"</span>],
+                <span class="st">"engager_profile_url"</span>: engager[<span class="st">"profile_url"</span>],
+            }).execute()
+            new_leads.append(engager)
+
+    <span class="kw">return</span> new_leads
+</pre>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- PHASE 4: SAFETY -->
+  <!-- ============================================ -->
+  <div class="phase">
+    <div class="phase-badge" style="background: var(--orange);">Phase 4</div>
+    <h2>Safety + Cost Controls</h2>
+    <p>Prevent runaway costs, handle stuck jobs, and protect against edge cases. These are the things that break in production.</p>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--orange);">13</div>
+      <div>
+        <h3>Implement Cost Tracking + Limits</h3>
+        <div class="step-sub">Track spend per job, per monitor, and per month</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <ol class="sub-steps">
+        <li>
+          <div class="sub-num">1</div>
+          <div class="sub-content">
+            <strong>Calculate cost per job</strong>
+            <p>Track API calls and leads scraped. Cost = (engagers x cost per engager) + (API calls x cost per call). Store on each run record.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">2</div>
+          <div class="sub-content">
+            <strong>Monthly lead limit</strong>
+            <p>Set a monthly cap (e.g., 5,000 leads). Query the runs table for the current billing cycle. Block new jobs when approaching the limit. Show a warning banner at 80%.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">3</div>
+          <div class="sub-content">
+            <strong>Per-job lead cap</strong>
+            <p>Hard limit per individual job (e.g., 5,000 leads). Anything above 1,000 requires the approval flow before running.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--orange);">14</div>
+      <div>
+        <h3>Handle Failures + Edge Cases</h3>
+        <div class="step-sub">Timeouts, stale jobs, zero results, and API errors</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="pitfall-grid" style="margin-bottom: 0;">
+        <div class="pitfall">
+          <h4>Job timeout</h4>
+          <p>Set a 10-minute hard timeout per job. If the worker is still running after 10 minutes, mark the job as failed with the error logged.</p>
+        </div>
+        <div class="pitfall">
+          <h4>Stale job recovery</h4>
+          <p>On startup, scan for jobs stuck in "running" for more than 15 minutes. Reset them to "queued" so they get retried.</p>
+        </div>
+        <div class="pitfall">
+          <h4>Zero engagers</h4>
+          <p>If the scraping API returns 0 results, mark the job as failed instead of completed. Something went wrong - don't record it as a successful run.</p>
+        </div>
+        <div class="pitfall">
+          <h4>Parallel limits</h4>
+          <p>Cap concurrent scraping API calls to 3. More than that and you hit rate limits or timeouts. Use a semaphore or simple counter.</p>
+        </div>
+        <div class="pitfall">
+          <h4>Smart skip (posts mode)</h4>
+          <p>Before scraping a tracked post again, check if the engagement count changed since last run. If not, skip it - no new people to find.</p>
+        </div>
+        <div class="pitfall">
+          <h4>Worker restart</h4>
+          <p>Configure Railway (or your host) to auto-restart on failure. Set retry limits (e.g., 10 restarts) before alerting you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- PHASE 5: DEPLOY -->
+  <!-- ============================================ -->
+  <div class="phase">
+    <div class="phase-badge" style="background: var(--teal);">Phase 5</div>
+    <h2>Deploy Everything</h2>
+    <p>Frontend to Netlify, worker to Railway, database already on Supabase. Three services, each deployed independently.</p>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--teal);">15</div>
+      <div>
+        <h3>Deploy the Frontend to Netlify</h3>
+        <div class="step-sub">Build and drag-drop, or connect to GitHub for auto-deploy</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <ol class="sub-steps">
+        <li>
+          <div class="sub-num">1</div>
+          <div class="sub-content">
+            <strong>Build the project</strong>
+            <p>Run <code>npm run build</code>. This creates a <code>dist/</code> folder with the static site.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">2</div>
+          <div class="sub-content">
+            <strong>Deploy to Netlify</strong>
+            <p>Drag the dist/ folder to Netlify, or connect your GitHub repo for automatic deploys on every push.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">3</div>
+          <div class="sub-content">
+            <strong>Add environment variables</strong>
+            <p>Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify's environment variable settings.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step-card">
+    <div class="step-banner" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="step-num" style="background: var(--teal);">16</div>
+      <div>
+        <h3>Deploy the Worker to Railway</h3>
+        <div class="step-sub">Docker container running 24/7</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <ol class="sub-steps">
+        <li>
+          <div class="sub-num">1</div>
+          <div class="sub-content">
+            <strong>Create a Dockerfile</strong>
+            <p>Python 3.11-slim base image. Copy requirements.txt and worker.py. Install dependencies. Set the entrypoint to run worker.py.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">2</div>
+          <div class="sub-content">
+            <strong>Push to Railway</strong>
+            <p>Connect your GitHub repo to Railway. It detects the Dockerfile and deploys automatically. Set environment variables in Railway's dashboard.</p>
+          </div>
+        </li>
+        <li>
+          <div class="sub-num">3</div>
+          <div class="sub-content">
+            <strong>Configure restart policy</strong>
+            <p>Set the service to auto-restart on failure with a retry limit. The worker should run continuously.</p>
+          </div>
+        </li>
+      </ol>
+<pre class="code">
+<span class="cm"># Dockerfile</span>
+<span class="kw">FROM</span> python:3.11-slim
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements.txt
+<span class="kw">COPY</span> worker.py .
+<span class="kw">CMD</span> [<span class="st">"python"</span>, <span class="st">"worker.py"</span>]
+</pre>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- BUILD ORDER -->
+  <!-- ============================================ -->
+  <div class="divider"><span>The Build Order</span></div>
+
+  <div class="card">
+    <div class="card-title">Start to Finish</div>
+    <div class="card-desc">Follow this sequence. Start with the database and worker, then build the frontend around it.</div>
+    <ol class="build-order">
+      <li><strong>Supabase setup</strong> - create project, run schema, enable RLS</li>
+      <li><strong>Get API access</strong> - LinkedIn data API + scraping API credentials</li>
+      <li><strong>Worker skeleton</strong> - polling loop + job status updates</li>
+      <li><strong>Direct mode</strong> - simplest: paste URL, scrape, return results</li>
+      <li><strong>Keyword mode</strong> - search posts, scrape top results</li>
+      <li><strong>Profile mode</strong> - fetch profile posts, scrape engagers</li>
+      <li><strong>Deduplication</strong> - seen_engagers table + dedup logic</li>
+      <li><strong>Posts mode</strong> - recurring scrape with smart skip</li>
+      <li><strong>Webhook delivery</strong> - send leads to Clay or any endpoint</li>
+      <li><strong>Approval flow</strong> - threshold check + awaiting_approval status</li>
+      <li><strong>Cost tracking</strong> - per-job and monthly limits</li>
+      <li><strong>Frontend dashboard</strong> - monitors, queue, history, usage</li>
+      <li><strong>Realtime updates</strong> - Supabase subscriptions for live status</li>
+      <li><strong>Deploy worker</strong> - Railway with Docker + auto-restart</li>
+      <li><strong>Deploy frontend</strong> - Netlify with env vars</li>
+    </ol>
+  </div>
+
+  <div class="note">
+    <strong>Cost breakdown:</strong> About $6 per 1,000 leads from the scraping APIs. Infrastructure (Supabase + Railway + Netlify) runs under $10/month on free/starter tiers. The whole system is mutable - when you want to add a new mode, change the scraping logic, or adjust cost limits, describe it to Claude Code. Done in minutes.
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- FOOTER -->
+  <!-- ============================================ -->
+  <footer>
+    <div class="footer-pill">
+      <span>Ivan Falco  |  coldiq.com</span>
+    </div>
+    <p>
+      Track keywords, profiles, and posts on LinkedIn.<br>
+      Collect every person who engages. 1,000 leads for $6. Built with Claude Code.
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
